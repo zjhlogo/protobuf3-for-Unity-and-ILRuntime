@@ -71,6 +71,9 @@ class MessageGenerator : public SourceGeneratorBase {
 
   void AddDeprecatedFlag(io::Printer* printer);
   
+  bool GetOptionName(std::string& out, const FileDescriptor* descriptor_, const UnknownField& field);
+  bool GetOptionValue(std::string& out, const UnknownField& field);
+
   std::string class_name();
   std::string full_class_name();
 

@@ -104,6 +104,46 @@ void MessageGenerator::AddDeprecatedFlag(io::Printer* printer) {
   }
 }
 
+bool MessageGenerator::GetOptionName(std::string& out, const FileDescriptor* descriptor_, const UnknownField& field)
+{
+    for (int i = 0; i < descriptor_->extension_count(); ++i)
+    {
+        const auto desc = descriptor_->extension(i);
+        if (desc->number() == field.number())
+        {
+            out = desc->name();
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool MessageGenerator::GetOptionValue(std::string& out, const UnknownField& field)
+{
+    switch (field.type())
+    {
+    case UnknownField::TYPE_VARINT:
+        out = SimpleItoa(field.varint());
+        break;
+    case UnknownField::TYPE_FIXED32:
+        out = SimpleItoa(field.fixed32());
+        break;
+    case UnknownField::TYPE_FIXED64:
+        out = SimpleItoa(field.fixed64());
+        break;
+    case UnknownField::TYPE_LENGTH_DELIMITED:
+        out = "\"" + field.length_delimited() + "\"";
+        break;
+//     case UnknownField::TYPE_GROUP:
+    default:
+        return false;
+        break;
+    }
+
+    return true;
+}
+
 void MessageGenerator::Generate(io::Printer* printer) {
   std::map<string, string> vars;
   vars["class_name"] = class_name();
@@ -127,6 +167,25 @@ void MessageGenerator::Generate(io::Printer* printer) {
   printer->Print(
 	  vars,
 	  "public static pb::MessageParser<$class_name$> Parser { get { return _parser; } }\n\n");
+
+  const auto& unknownFieldSet = descriptor_->options().GetReflection()->GetUnknownFields(descriptor_->options());
+  for (int i = 0; i < unknownFieldSet.field_count(); ++i)
+  {
+      const auto& field = unknownFieldSet.field(i);
+
+      string name;
+      if (!GetOptionName(name, descriptor_->file(), field)) continue;
+
+      string value;
+      if (!GetOptionValue(value, field)) continue;
+
+      vars["option_name"] = name;
+      vars["option_value"] = value;
+
+      printer->Print(
+          vars,
+          "public const ushort $option_name$ = $option_value$;\n\n");
+  }
 
   // CustomOptions property, only for options messages
   if (IsDescriptorOptionMessage(descriptor_)) {
