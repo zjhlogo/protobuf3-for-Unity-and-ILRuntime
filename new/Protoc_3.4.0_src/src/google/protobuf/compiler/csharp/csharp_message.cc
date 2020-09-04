@@ -106,6 +106,8 @@ void MessageGenerator::AddDeprecatedFlag(io::Printer* printer) {
 
 bool MessageGenerator::GetOptionName(std::string& out, const FileDescriptor* descriptor_, const UnknownField& field)
 {
+    if (!descriptor_) return false;
+
     for (int i = 0; i < descriptor_->extension_count(); ++i)
     {
         const auto desc = descriptor_->extension(i);
@@ -114,6 +116,12 @@ bool MessageGenerator::GetOptionName(std::string& out, const FileDescriptor* des
             out = desc->name();
             return true;
         }
+    }
+
+    for (int i = 0; i < descriptor_->dependency_count(); ++i)
+    {
+        const auto fileDesc = descriptor_->dependency(i);
+        if (GetOptionName(out, fileDesc, field)) return true;
     }
 
     return false;
