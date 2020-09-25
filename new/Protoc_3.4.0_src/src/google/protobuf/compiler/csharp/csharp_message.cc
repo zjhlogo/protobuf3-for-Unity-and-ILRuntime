@@ -177,22 +177,27 @@ void MessageGenerator::Generate(io::Printer* printer) {
 	  "public static pb::MessageParser<$class_name$> Parser { get { return _parser; } }\n\n");
 
   const auto& unknownFieldSet = descriptor_->options().GetReflection()->GetUnknownFields(descriptor_->options());
-  for (int i = 0; i < unknownFieldSet.field_count(); ++i)
+  if (unknownFieldSet.field_count())
   {
-      const auto& field = unknownFieldSet.field(i);
+      for (int i = 0; i < unknownFieldSet.field_count(); ++i)
+      {
+          const auto& field = unknownFieldSet.field(i);
 
-      string name;
-      if (!GetOptionName(name, descriptor_->file(), field)) continue;
+          string name;
+          if (!GetOptionName(name, descriptor_->file(), field)) continue;
 
-      string value;
-      if (!GetOptionValue(value, field)) continue;
+          string value;
+          if (!GetOptionValue(value, field)) continue;
 
-      vars["option_name"] = name;
-      vars["option_value"] = value;
-
-      printer->Print(
-          vars,
-          "public const ushort $option_name$ = $option_value$;\n\n");
+          vars["option_name"] = UnderscoresToCamelCase(name, false);
+          vars["option_value"] = value;
+          printer->Print(vars, "public const ushort $option_name$ = $option_value$;\n\n");
+      }
+      printer->Print(vars, "public ushort GetMsgType() { return msgType; }\n\n");
+  }
+  else
+  {
+      printer->Print(vars, "public ushort GetMsgType() { return 0; }\n\n");
   }
 
   // CustomOptions property, only for options messages
