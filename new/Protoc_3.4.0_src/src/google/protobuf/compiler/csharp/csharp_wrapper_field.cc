@@ -119,6 +119,12 @@ void WrapperFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
     "}\n");
 }
 
+void WrapperFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "$name$_ = $default_value$;\n");
+}
+
 void WrapperFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(
     variables_,

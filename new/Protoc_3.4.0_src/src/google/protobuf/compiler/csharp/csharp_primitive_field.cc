@@ -136,6 +136,12 @@ void PrimitiveFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
   printer->Print("}\n");
 }
 
+void PrimitiveFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "$name$_ = $default_value$;\n");
+}
+
 void PrimitiveFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(
     variables_,
@@ -205,6 +211,12 @@ void PrimitiveOneofFieldGenerator::GenerateParsingCode(io::Printer* printer) {
     printer->Print(
       variables_,
       "$property_name$ = input.Read$capitalized_type_name$();\n");
+}
+
+void PrimitiveOneofFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "$name$_ = 0;\n");
 }
 
 void PrimitiveOneofFieldGenerator::GenerateCloningCode(io::Printer* printer) {

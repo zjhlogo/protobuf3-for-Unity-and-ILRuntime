@@ -114,6 +114,12 @@ void MessageFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
     "}\n");
 }
 
+void MessageFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "if ($name$_ != null) $name$_.Reset();\n");
+}
+
 void MessageFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(
     variables_,

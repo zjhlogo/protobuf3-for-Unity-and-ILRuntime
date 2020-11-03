@@ -112,6 +112,12 @@ void MapFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
     "size += $name$_.CalculateSize(_map_$name$_codec);\n");
 }
 
+void MapFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "$name$_ = $default_value$;\n");
+}
+
 void MapFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(
     variables_,

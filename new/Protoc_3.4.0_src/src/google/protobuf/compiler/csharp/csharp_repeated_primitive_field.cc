@@ -96,6 +96,12 @@ void RepeatedPrimitiveFieldGenerator::GenerateSerializedSizeCode(io::Printer* pr
     "size += $name$_.CalculateSize(_repeated_$name$_codec);\n");
 }
 
+void RepeatedPrimitiveFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "$name$_.Clear();\n");
+}
+
 void RepeatedPrimitiveFieldGenerator::WriteHash(io::Printer* printer) {
   printer->Print(
     variables_,

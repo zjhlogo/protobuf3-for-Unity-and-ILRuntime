@@ -461,6 +461,17 @@ void MessageGenerator::GenerateMessageSerializationMethods(io::Printer* printer)
   printer->Print("return size;\n");
   printer->Outdent();
   printer->Print("}\n\n");
+
+  printer->Print(
+      "public void Reset() {\n");
+  printer->Indent();
+  for (int i = 0; i < descriptor_->field_count(); i++) {
+      scoped_ptr<FieldGeneratorBase> generator(
+          CreateFieldGeneratorInternal(descriptor_->field(i)));
+      generator->GenerateResetCode(printer);
+  }
+  printer->Outdent();
+  printer->Print("}\n\n");
 }
 
 void MessageGenerator::GenerateMergingMethods(io::Printer* printer) {

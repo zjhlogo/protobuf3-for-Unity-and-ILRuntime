@@ -57,6 +57,7 @@ class PrimitiveFieldGenerator : public FieldGeneratorBase {
   virtual void GenerateParsingCode(io::Printer* printer);
   virtual void GenerateSerializationCode(io::Printer* printer);
   virtual void GenerateSerializedSizeCode(io::Printer* printer);
+  virtual void GenerateResetCode(io::Printer* printer);
 
   virtual void WriteHash(io::Printer* printer);
   virtual void WriteEquals(io::Printer* printer);
@@ -80,6 +81,7 @@ class PrimitiveOneofFieldGenerator : public PrimitiveFieldGenerator {
   virtual void GenerateMembers(io::Printer* printer);
   virtual void WriteToString(io::Printer* printer);
   virtual void GenerateParsingCode(io::Printer* printer);
+  virtual void GenerateResetCode(io::Printer* printer);
 
  private:
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(PrimitiveOneofFieldGenerator);

@@ -75,6 +75,12 @@ void EnumFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
     "}\n");
 }
 
+void EnumFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "$name$_ = $default_value$;\n");
+}
+
 void EnumFieldGenerator::GenerateCodecCode(io::Printer* printer) {
     printer->Print(
         variables_,
@@ -112,6 +118,12 @@ void EnumOneofFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
     "if ($has_property_check$) {\n"
     "  size += $tag_size$ + pb::CodedOutputStream.ComputeEnumSize((int) $property_name$);\n"
     "}\n");
+}
+
+void EnumOneofFieldGenerator::GenerateResetCode(io::Printer* printer) {
+  printer->Print(
+    variables_,
+    "$name$_ = 0;\n");
 }
 
 }  // namespace csharp
