@@ -114,6 +114,19 @@ void RepeatedMessageFieldGenerator::GenerateSerializedSizeCode(io::Printer* prin
 void RepeatedMessageFieldGenerator::GenerateResetCode(io::Printer* printer) {
   printer->Print(
     variables_,
+    "foreach(var item in $name$_) {\n");
+
+  printer->Indent();
+  printer->Print(
+    variables_,
+    "PGLogic.Messages.MessagePool.ReturnMessage(item);\n");
+  printer->Outdent();
+  printer->Print(
+    variables_,
+    "}\n");
+
+  printer->Print(
+    variables_,
     "$name$_.Clear();\n");
 }
 

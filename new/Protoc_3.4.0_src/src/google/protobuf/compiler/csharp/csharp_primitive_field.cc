@@ -216,7 +216,7 @@ void PrimitiveOneofFieldGenerator::GenerateParsingCode(io::Printer* printer) {
 void PrimitiveOneofFieldGenerator::GenerateResetCode(io::Printer* printer) {
   printer->Print(
     variables_,
-    "$name$_ = 0;\n");
+    "$name$_ = $default_value$;\n");
 }
 
 void PrimitiveOneofFieldGenerator::GenerateCloningCode(io::Printer* printer) {

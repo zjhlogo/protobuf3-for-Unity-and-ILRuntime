@@ -176,30 +176,6 @@ void MessageGenerator::Generate(io::Printer* printer) {
 	  vars,
 	  "public static pb::MessageParser<$class_name$> Parser { get { return _parser; } }\n\n");
 
-  const auto& unknownFieldSet = descriptor_->options().GetReflection()->GetUnknownFields(descriptor_->options());
-  if (unknownFieldSet.field_count())
-  {
-      for (int i = 0; i < unknownFieldSet.field_count(); ++i)
-      {
-          const auto& field = unknownFieldSet.field(i);
-
-          string name;
-          if (!GetOptionName(name, descriptor_->file(), field)) continue;
-
-          string value;
-          if (!GetOptionValue(value, field)) continue;
-
-          vars["option_name"] = UnderscoresToCamelCase(name, false);
-          vars["option_value"] = value;
-          printer->Print(vars, "public const ushort $option_name$ = $option_value$;\n\n");
-      }
-      printer->Print(vars, "public ushort GetMsgType() { return msgType; }\n\n");
-  }
-  else
-  {
-      printer->Print(vars, "public ushort GetMsgType() { return 0; }\n\n");
-  }
-
   // CustomOptions property, only for options messages
   if (IsDescriptorOptionMessage(descriptor_)) {
     printer->Print(
@@ -272,6 +248,34 @@ void MessageGenerator::Generate(io::Printer* printer) {
       "  $name$_ = null;\n"
       "}\n\n");
   }
+
+  // generate message type virtual method
+  const auto& unknownFieldSet = descriptor_->options().GetReflection()->GetUnknownFields(descriptor_->options());
+  if (unknownFieldSet.field_count())
+  {
+      for (int i = 0; i < unknownFieldSet.field_count(); ++i)
+      {
+          const auto& field = unknownFieldSet.field(i);
+
+          string name;
+          if (!GetOptionName(name, descriptor_->file(), field)) continue;
+
+          string value;
+          if (!GetOptionValue(value, field)) continue;
+
+          vars["option_name"] = UnderscoresToCamelCase(name, false);
+          vars["option_value"] = value;
+          printer->Print(vars, "public const ushort $option_name$ = $option_value$;\n\n");
+      }
+      printer->Print(vars, "public ushort GetMsgType() { return msgType; }\n\n");
+  }
+  else
+  {
+      printer->Print(vars, "public ushort GetMsgType() { return 0; }\n\n");
+  }
+
+  // generate private constructor
+  printer->Print(vars, "private $class_name$() {}\n\n");
 
   // Standard methods
 //  GenerateFrameworkMethods(printer);

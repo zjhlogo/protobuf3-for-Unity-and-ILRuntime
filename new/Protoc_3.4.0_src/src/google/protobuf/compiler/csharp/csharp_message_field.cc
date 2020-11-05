@@ -81,7 +81,7 @@ void MessageFieldGenerator::GenerateMergingCode(io::Printer* printer) {
     variables_,
     "if (other.$has_property_check$) {\n"
     "  if ($has_not_property_check$) {\n"
-    "    $name$_ = new $type_name$();\n"
+    "    $name$_ = PGLogic.Messages.MessagePool.GetMessage<$type_name$>();\n"
     "  }\n"
     "  $property_name$.MergeFrom(other.$property_name$);\n"
     "}\n");
@@ -91,7 +91,7 @@ void MessageFieldGenerator::GenerateParsingCode(io::Printer* printer) {
   printer->Print(
     variables_,
     "if ($has_not_property_check$) {\n"
-    "  $name$_ = new $type_name$();\n"
+    "  $name$_ = PGLogic.Messages.MessagePool.GetMessage<$type_name$>();\n"
     "}\n"
     // TODO(jonskeet): Do we really need merging behaviour like this?
     "input.ReadMessage($name$_);\n"); // No need to support TYPE_GROUP...
@@ -117,7 +117,10 @@ void MessageFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
 void MessageFieldGenerator::GenerateResetCode(io::Printer* printer) {
   printer->Print(
     variables_,
-    "if ($name$_ != null) $name$_.Reset();\n");
+      "PGLogic.Messages.MessagePool.ReturnMessage($name$_);\n");
+  printer->Print(
+      variables_,
+      "$name$_ = null;\n");
 }
 
 void MessageFieldGenerator::WriteHash(io::Printer* printer) {
@@ -181,7 +184,7 @@ void MessageOneofFieldGenerator::GenerateParsingCode(io::Printer* printer) {
   // TODO(jonskeet): We may be able to do better than this
   printer->Print(
     variables_,
-    "$type_name$ subBuilder = new $type_name$();\n"
+    "$type_name$ subBuilder = PGLogic.Messages.MessagePool.GetMessage<$type_name$>();\n"
     "if ($has_property_check$) {\n"
     "  subBuilder.MergeFrom($property_name$);\n"
     "}\n"

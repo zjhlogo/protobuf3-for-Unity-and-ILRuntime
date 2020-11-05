@@ -123,7 +123,7 @@ void EnumOneofFieldGenerator::GenerateSerializedSizeCode(io::Printer* printer) {
 void EnumOneofFieldGenerator::GenerateResetCode(io::Printer* printer) {
   printer->Print(
     variables_,
-    "$name$_ = 0;\n");
+    "$name$_ = $default_value$;\n");
 }
 
 }  // namespace csharp
